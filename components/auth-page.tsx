@@ -1,7 +1,9 @@
 'use client'
 
+import { SignIn, SignUp } from "@/lib/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {z} from 'zod'
@@ -11,36 +13,38 @@ const AuthSchema = z.object({
     password: z.string('password is required').min(4, 'Password must be more than 4 character')
 })
 
-type AuthType = z.infer<typeof AuthSchema>;
+export type AuthType = z.infer<typeof AuthSchema>;
 
 
 function AuthPage() {
     const [isSignUp, setIsSignUp] = useState<boolean>(false)
+    const router = useRouter()
     const {register, handleSubmit} = useForm<AuthType>({
         resolver: zodResolver(AuthSchema)
     })
 
-
-    async function handleAuth (data:AuthType) {
-        console.log(data)
+    
+    function handleAuth (data:AuthType) {
 
         if(!data.email || !data.password) return 
 
-        const userData = {
-            email: data.email,
-            password: data.password
-        }
+        
+        const email = data.email;
+        const password = data.password;
 
         try {
-            if(isSignUp){
-                // server action to signup
-                console.log('Creating an account with user data', userData )
+            if (isSignUp){
+                //  signup action
+                SignUp({email, password})
+                router.push('/profile')
+                
             } else {
-                // server action to signin
-                console.log('logging in into an existing account with user data', userData )
+                // sign in action
+                SignIn({email, password})
+                router.push('/profile')
             }
         } catch {
-            //handle error
+            throw new Error("Can't resolve operation")
         }
     }
     

@@ -1,4 +1,4 @@
-import { createClient } from "./server";
+// import { createClient } from "./server";
 
-//for supabase server side operations
-export const supabasServer = createClient()
+// //for supabase server side operations
+// export const supabaseServer = createClient()
